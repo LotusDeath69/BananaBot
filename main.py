@@ -1,18 +1,18 @@
 import os
 from discord.ext import commands 
 import discord
-from fkdr import checkFKDR
-from player import checkStats
-from bedwars import checkBedwarsStats
-from bridge import checkBridgeStats
+from minigames.bedwars import checkBedwarsStats
+from minigames.fkdr import checkFKDR
+from minigames.bridge import checkBridgeStats
+from minigames.murderMystery import getMurderMysteryStats
+from skyblock_misc.player import checkStats
+from skyblock_misc.friends import getFriends
+from skyblock_misc.skyblock import getBalance, getDungeonStats, getSkillAV, getSkillLvl, getSlayer
 from skyblock import getSkillAV, getSlayer, getBalance, getSkillLvl, getDungeonStats
-from skywars import getSkywarsStats
+from minigames.skywars import getSkywarsStats
 from server import keepAlive
-from ticket import addTicketSee, addTicketConfig, createChannel, verifyWeight, deleteTicketConfig, deleteTicketSee, configHelp, configCategory, configChannel, renameChannel, deleteChannel, ticketPerms, configRestart, addUser
-from DiscordChatExporterPy import chat_exporter
+from ticket_system import ticket, GuildApp
 from message import ticket_help_message, command_help_message, ticket_setup_guide
-from friends import getFriends
-from murderMystery import getMurderMysteryStats
 
 
 intents = discord.Intents.default()
@@ -201,59 +201,59 @@ async def ticket(ctx):
 @ticket.command()
 async def create(ctx, *args):
   arg = ' '.join(args).lower()
-  await createChannel(ctx, client, arg)
+  await ticket.createChannel(ctx, client, arg)
 
 
 @ticket.command()
 async def config(ctx, *args):
   try:
     if args[0].lower() == 'category':
-      await configCategory(ctx, args[1])
+      await ticket.configCategory(ctx, args[1])
     elif args[0].lower() == 'channel':
-      await configChannel(ctx, args[1])
+      await ticket.configChannel(ctx, args[1])
     elif args[0].lower() == 'help':
-      await configHelp(ctx)
+      await ticket.configHelp(ctx)
     elif args[0].lower() == 'restart':
-      await configRestart(ctx, client)
+      await ticket.configRestart(ctx, client)
   except IndexError:
-    await configHelp(ctx)
+    await ticket.configHelp(ctx)
 
 
 @ticket.command()
 async def verifyweight(ctx, arg):
-  await verifyWeight(ctx, arg)
+  await ticket.verifyWeight(ctx, arg)
 
 
 @ticket.command()
 async def addrole(ctx, *args):
   if args[0].lower() == 'config':
-    await addTicketConfig(ctx, args[1])
+    await ticket.addTicketConfig(ctx, args[1])
   else:
-    await addTicketSee(ctx, args[0])
+    await ticket.addTicketSee(ctx, args[0])
 
   
 @ticket.command()
 async def deleterole(ctx, *args):
   if args[0].lower() == 'config':
-    await deleteTicketConfig(ctx, args[1])
+    await ticket.deleteTicketConfig(ctx, args[1])
   else:
-    await deleteTicketSee(ctx, args[0])
+    await ticket.deleteTicketSee(ctx, args[0])
 
 
 @ticket.command()
 async def delete(ctx):
-  await deleteChannel(ctx)
+  await ticket.deleteChannel(ctx)
 
 
 @ticket.command()
 async def rename(ctx, *args):
   arg = ' '.join(args)
-  await renameChannel(ctx, arg)
+  await ticket.renameChannel(ctx, arg)
 
 
 @ticket.command()
 async def perms(ctx):
-  await ticketPerms(ctx)
+  await ticket.ticketPerms(ctx)
 
 
 @client.command()
@@ -268,7 +268,7 @@ async def guide(ctx):
 
 @ticket.command()
 async def adduser(ctx, arg): 
-  await addUser(ctx, arg)
+  await ticket.addUser(ctx, arg)
   
 
 @client.command()
@@ -279,11 +279,6 @@ async def balls(ctx):
 @client.command()
 async def dababy(ctx):
   await ctx.reply("Let's GOO")
-
-
-@client.command()
-async def transcript(ctx):
-  await chat_exporter.quick_export(ctx)
 
 
 @client.event

@@ -1,6 +1,6 @@
 import requests
 import datetime
-from pain import s
+from minigames.pain import s
 
 def uuid(ign):
     try:
