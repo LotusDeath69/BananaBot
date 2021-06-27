@@ -11,9 +11,10 @@ from skyblock_misc.skyblock import getBalance, getDungeonStats, getSkillAV, getS
 from minigames.skywars import getSkywarsStats
 from server import keepAlive
 from ticket_system import ticket, GuildApp, message
+from dotenv import load_dotenv
 
 
-
+load_dotenv()
 intents = discord.Intents.default()
 intents.members = True
 GUILD_REQUIREMENT = 4500
@@ -288,5 +289,5 @@ async def on_raw_reaction_add(payload):
     pass
 
 
-keepAlive()
+# keepAlive()
 client.run(os.environ['TOKEN'])

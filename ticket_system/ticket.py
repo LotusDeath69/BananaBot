@@ -6,8 +6,7 @@ from ticket_system.message import config_help_message
 import asyncio
 import requests
 from DiscordChatExporterPy.chat_exporter.chat_exporter import quick_export
-from dotenv import load_dotenv
-key = load_dotenv('API')
+key = os.environ['API']
 GUILD_REQUIREMENT = 4500
 
 
