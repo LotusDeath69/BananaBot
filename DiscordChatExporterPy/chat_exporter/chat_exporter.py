@@ -76,15 +76,14 @@ async def quick_export(ctx):
     # Save transcript
     transcript_embed = discord.Embed(
         description=f"**Transcript Name:** transcript-{ctx.channel.name}\n\n"
-                    f"{ctx.author.mention} closed this ticket.",
+                    f"{ctx.author.mention} requested a transcript of the channel",
         colour=discord.Colour.blurple()
     )
 
     transcript_file = discord.File(io.BytesIO(transcript.html.encode()),
                                    filename=f"transcript-{ctx.channel.name}.html")
 
-    channel = ctx.guild.get_channel(850859812806983760)
-    await channel.send(embed=transcript_embed, file=transcript_file)
+    await ctx.send(embed=transcript_embed, file=transcript_file)
 
 
 @dataclass
