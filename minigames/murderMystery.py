@@ -1,6 +1,7 @@
 import requests 
 import os 
-api_key = os.environ['API']
+from dotenv import load_dotenv
+api_key = load_dotenv('API')
 
 
 def uuid(ign):

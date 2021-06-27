@@ -1,12 +1,13 @@
 from replit import db
 import discord
-from GuildApp import guildApp, uuid, checkWeight, applicationInfo, applicationForm
+from ticket_system.GuildApp import guildApp, uuid, checkWeight, applicationInfo, applicationForm
 import os 
-from message import config_help_message
+from ticket_system.message import config_help_message
 import asyncio
 import requests
 from DiscordChatExporterPy.chat_exporter.chat_exporter import quick_export
-key = os.environ['API']
+from dotenv import load_dotenv
+key = load_dotenv('API')
 GUILD_REQUIREMENT = 4500
 
 

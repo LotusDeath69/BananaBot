@@ -8,11 +8,10 @@ from minigames.murderMystery import getMurderMysteryStats
 from skyblock_misc.player import checkStats
 from skyblock_misc.friends import getFriends
 from skyblock_misc.skyblock import getBalance, getDungeonStats, getSkillAV, getSkillLvl, getSlayer
-from skyblock import getSkillAV, getSlayer, getBalance, getSkillLvl, getDungeonStats
 from minigames.skywars import getSkywarsStats
 from server import keepAlive
-from ticket_system import ticket, GuildApp
-from message import ticket_help_message, command_help_message, ticket_setup_guide
+from ticket_system import ticket, GuildApp, message
+
 
 
 intents = discord.Intents.default()
@@ -190,12 +189,12 @@ async def todo(ctx):
 @client.command()
 async def help(ctx, *args):
   if len(args) == 0:
-   await ctx.reply(embed=command_help_message())
+   await ctx.reply(embed=message.command_help_message())
 
 
 @client.group(invoke_without_command=True)
 async def ticket(ctx):
-  await ctx.reply(embed=ticket_help_message())
+  await ctx.reply(embed=message.ticket_help_message())
 
 
 @ticket.command()
@@ -263,7 +262,7 @@ async def test(ctx, args):
 
 @ticket.command()
 async def guide(ctx):
-  await ctx.reply(embed=ticket_setup_guide())
+  await ctx.reply(embed=message.ticket_setup_guide())
 
 
 @ticket.command()

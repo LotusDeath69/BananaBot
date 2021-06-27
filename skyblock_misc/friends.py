@@ -1,6 +1,7 @@
 import requests 
 import os 
-key = os.environ['API']
+from dotenv import load_dotenv
+key = load_dotenv('API')
 def uuid(ign):
     try:
         data = requests.get(f'https://api.mojang.com/users/profiles/minecraft/{ign}').json()
