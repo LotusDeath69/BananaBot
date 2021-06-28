@@ -1,4 +1,6 @@
-from replit import db
+# from replit import db
+import sqlite3
+from sqlite3 import OperationalError
 import discord
 from ticket_system.GuildApp import guildApp, uuid, checkWeight, applicationInfo, applicationForm
 import os 
@@ -6,8 +8,11 @@ from ticket_system.message import config_help_message
 import asyncio
 import requests
 from DiscordChatExporterPy.chat_exporter.chat_exporter import quick_export
+from ticket_system.sqlCommands import search, insert, create
 key = os.environ['API']
 GUILD_REQUIREMENT = 4500
+con = sqlite3.connect('test.db')
+cur = con.cursor()
 
 
 def checkRoles(ctx, roles):
@@ -21,66 +26,57 @@ def checkRoles(ctx, roles):
 async def addTicketSee(ctx, arg):
   guild = ctx.message.guild.id
   try:
-    roles_required = db[f'{guild}_ticket_roles_allow_to_config']
-
+    roles_required = search(cur, str(guild), 'roles_allow_to_config')
     if checkRoles(ctx, roles_required):
-      try:
-        role_list = db[f'{guild}_ticket_roles_allow_to_see']
-        if arg in role_list:
-          await ctx.reply(f'{ctx.guild.get_role(int(arg))} role can already see tickets.')
-        else: 
-          role_list.append(arg)
-          db[f'{guild}_ticket_roles_allow_to_see'] = role_list
-          await ctx.reply(f'Now users with {ctx.guild.get_role(int(arg))} will be able to see tickets.')
-
-
-      except KeyError:
-        db[f'{guild}_ticket_roles_allow_to_see'] = [arg]
+      
+      role_list = search(cur, str(guild), 'roles_allow_to_see')
+      if arg in role_list:
+        await ctx.reply(f'{ctx.guild.get_role(int(arg))} role can already see tickets.')
+      else: 
+        insert(cur, 'roles_allow_to_see', arg, str(guild))
         await ctx.reply(f'Now users with {ctx.guild.get_role(int(arg))} will be able to see tickets.')
-
-
     else:
-      role_name = []
-      for i in list(db[f'{guild}_ticket_roles_allow_to_config']):
-        role_name.append(ctx.guild.get_role(int(i)))
-      if role_name != []:
-        await ctx.reply(f'Roles Required: {str(role_name)} to use this command.')
+      if roles_required != []:
+        await ctx.reply(f'Roles Required: {str(roles_required)} to use this command.')
       else:
         await ctx.reply('You need to do %ticket addrole config <role id> first.')
 
 
-  except KeyError:
+  except OperationalError:
     await ctx.reply('You need to do %ticket addrole config <role id> first.')
 
 
 async def addTicketConfig(ctx, arg):
   guild = ctx.message.guild.id
   try: 
-    roles_required = db[f'{guild}_ticket_roles_allow_to_config']
+    roles_required = search(cur, str(guild), 'roles_allow_to_config')
+    print(roles_required)
+    # print('a')
     if checkRoles(ctx, roles_required):
-      role_list = db[f'{guild}_ticket_roles_allow_to_config']
+      # print('B')
+      role_list = roles_required
       if arg in role_list:
         await ctx.reply(f'{ctx.guild.get_role(int(arg))} role can already config tickets.')
+        # print('c')
       else:
-        role_list.append(arg)
-        db[f'{guild}_ticket_roles_allow_to_config'] = role_list
+        # print('d')
+        insert(cur, 'roles_allow_to_config', arg, str(guild))
         await ctx.reply(f'Now users with {ctx.guild.get_role(int(arg))} role will be able to config tickets.')
       
 
     else:
-        role_name = []
-        for i in db[f'{guild}_ticket_roles_allow_to_config']:
-          role_name.append(ctx.guild.get_role(int(i)))
-        if role_name != []:
-          await ctx.reply(f'Roles Required: {str(role_name)} to use this command.')
-        else:
-          if ctx.author.guild_permissions.administrator:
-            db[f'{guild}_ticket_roles_allow_to_config'] = [arg]
-            await ctx.reply(f'Now users with {ctx.guild.get_role(int(arg))} role will be able to config tickets.')
+      # print('f')
+      if roles_required != []:
+        await ctx.reply(f'Roles Required: {str(roles_required)} to use this command.')
+      else:
+        if ctx.author.guild_permissions.administrator:
+          insert(cur, 'roles_allow_to_config', arg, str(guild))
+          await ctx.reply(f'Now users with {ctx.guild.get_role(int(arg))} role will be able to config tickets.')
 
-  except KeyError:
+  except OperationalError:
+    # print(role_list, arg)
     if ctx.author.guild_permissions.administrator:
-      db[f'{guild}_ticket_roles_allow_to_config'] = [arg]
+      insert(cur, 'roles_allow_to_config', arg, str(guild))
       await ctx.reply(f'Now users with {ctx.guild.get_role(int(arg))} role will be able to config tickets.')
 
     else:

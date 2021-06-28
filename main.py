@@ -10,7 +10,9 @@ from skyblock_misc.friends import getFriends
 from skyblock_misc.skyblock import getBalance, getDungeonStats, getSkillAV, getSkillLvl, getSlayer
 from minigames.skywars import getSkywarsStats
 from server import keepAlive
-from ticket_system import ticket, GuildApp, message
+# from ticket_system import ticket, GuildApp, message
+from ticket_system.ticket import addTicketConfig, addTicketSee, addUser, createChannel, deleteChannel, deleteTicketConfig, deleteTicketSee, verifyWeight, configCategory, configChannel, configHelp, renameChannel, configRestart, ticketPerms
+from ticket_system.message import config_help_message, command_help_message, ticket_help_message, ticket_setup_guide
 from dotenv import load_dotenv
 
 
@@ -190,70 +192,71 @@ async def todo(ctx):
 @client.command()
 async def help(ctx, *args):
   if len(args) == 0:
-   await ctx.reply(embed=message.command_help_message())
+   await ctx.reply(embed=command_help_message())
 
 
 @client.group(invoke_without_command=True)
 async def ticket(ctx):
-  await ctx.reply(embed=message.ticket_help_message())
+  await ctx.reply(embed=ticket_help_message())
 
 
 @ticket.command()
 async def create(ctx, *args):
   arg = ' '.join(args).lower()
-  await ticket.createChannel(ctx, client, arg)
+  await createChannel(ctx, client, arg)
+  
 
 
 @ticket.command()
 async def config(ctx, *args):
   try:
     if args[0].lower() == 'category':
-      await ticket.configCategory(ctx, args[1])
+      await configCategory(ctx, args[1])
     elif args[0].lower() == 'channel':
-      await ticket.configChannel(ctx, args[1])
+      await configChannel(ctx, args[1])
     elif args[0].lower() == 'help':
-      await ticket.configHelp(ctx)
+      await configHelp(ctx)
     elif args[0].lower() == 'restart':
-      await ticket.configRestart(ctx, client)
+      await configRestart(ctx, client)
   except IndexError:
-    await ticket.configHelp(ctx)
+    await configHelp(ctx)
 
 
 @ticket.command()
 async def verifyweight(ctx, arg):
-  await ticket.verifyWeight(ctx, arg)
+  await verifyWeight(ctx, arg)
 
 
 @ticket.command()
 async def addrole(ctx, *args):
   if args[0].lower() == 'config':
-    await ticket.addTicketConfig(ctx, args[1])
+    await addTicketConfig(ctx, args[1])
   else:
-    await ticket.addTicketSee(ctx, args[0])
+    await addTicketSee(ctx, args[0])
 
   
 @ticket.command()
 async def deleterole(ctx, *args):
   if args[0].lower() == 'config':
-    await ticket.deleteTicketConfig(ctx, args[1])
+    await deleteTicketConfig(ctx, args[1])
   else:
-    await ticket.deleteTicketSee(ctx, args[0])
+    await deleteTicketSee(ctx, args[0])
 
 
 @ticket.command()
 async def delete(ctx):
-  await ticket.deleteChannel(ctx)
+  await deleteChannel(ctx)
 
 
 @ticket.command()
 async def rename(ctx, *args):
   arg = ' '.join(args)
-  await ticket.renameChannel(ctx, arg)
+  await renameChannel(ctx, arg)
 
 
 @ticket.command()
 async def perms(ctx):
-  await ticket.ticketPerms(ctx)
+  await ticketPerms(ctx)
 
 
 @client.command()
@@ -263,7 +266,7 @@ async def test(ctx, args):
 
 @ticket.command()
 async def guide(ctx):
-  await ctx.reply(embed=message.ticket_setup_guide())
+  await ctx.reply(embed=ticket_setup_guide())
 
 
 @ticket.command()
